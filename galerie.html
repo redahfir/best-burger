@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galerie — BEST BURGER</title>
+  <meta name="description" content="La galerie BEST BURGER : nos burgers, nos plats et l'ambiance du resto en images." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/jpeg" href="img/logobestburger.jpeg" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="container nav">
+      <a href="index.html" class="brand"><img src="img/logobestburger.jpeg" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" /></a>
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="menu.html">Menu</a>
+        <a href="galerie.html" class="active">Galerie</a>
+        <a href="contact.html">Contact</a>
+        <span class="nav-cta"><a class="btn" href="tel:+33327210912">03 27 21 09 12</a></span>
+      </nav>
+      <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="hero" style="min-height:60svh">
+    <div class="hero__bg" data-parallax="0.15" style="background-image:url('https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=1800&q=80')"></div>
+    <div class="hero__noise"></div>
+    <div class="container hero__content" style="padding-top:90px">
+      <p class="eyebrow" data-reveal>En images</p>
+      <h1 class="hero__title" data-reveal data-delay="1" style="font-size:clamp(2.8rem,9vw,6rem)">LA <span class="hl">GALERIE</span></h1>
+      <p class="hero__sub" data-reveal data-delay="2">Un avant-goût de ce qui vous attend. Cliquez sur une image pour l'agrandir.</p>
+    </div>
+  </section>
+
+  <!-- ===== GALLERY ===== -->
+  <section class="section">
+    <div class="container">
+      <div class="gallery-grid" data-reveal>
+        <figure class="gallery-item wide">
+          <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80" data-full="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1600&q=80" alt="Cheese Burger" loading="lazy" />
+          <figcaption class="cap">Cheese Burger</figcaption>
+        </figure>
+        <figure class="gallery-item tall">
+          <img src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=1400&q=80" alt="Le Best" loading="lazy" />
+          <figcaption class="cap">Le Best</figcaption>
+        </figure>
+        <figure class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=1400&q=80" alt="Frites" loading="lazy" />
+          <figcaption class="cap">Nos frites</figcaption>
+        </figure>
+        <figure class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=1400&q=80" alt="Spicy Chicken" loading="lazy" />
+          <figcaption class="cap">Spicy Chicken</figcaption>
+        </figure>
+        <figure class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=1400&q=80" alt="Nuggets et tenders" loading="lazy" />
+          <figcaption class="cap">Nuggets & Tenders</figcaption>
+        </figure>
+        <figure class="gallery-item tall">
+          <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=1400&q=80" alt="Burger généreux" loading="lazy" />
+          <figcaption class="cap">Fait minute</figcaption>
+        </figure>
+        <figure class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=1400&q=80" alt="Tacos" loading="lazy" />
+          <figcaption class="cap">Nos Tacos</figcaption>
+        </figure>
+        <figure class="gallery-item wide">
+          <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=80" data-full="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1600&q=80" alt="Burger gros plan" loading="lazy" />
+          <figcaption class="cap">Le détail qui compte</figcaption>
+        </figure>
+        <figure class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1586816001966-79b736744398?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1586816001966-79b736744398?auto=format&fit=crop&w=1400&q=80" alt="Le 360 Burger" loading="lazy" />
+          <figcaption class="cap">Le 360 Burger</figcaption>
+        </figure>
+        <figure class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=700&q=80" data-full="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=1400&q=80" alt="Tiramisu" loading="lazy" />
+          <figcaption class="cap">Desserts maison</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BAND ===== -->
+  <section class="section cta-band">
+    <div class="cta-band__bg" style="background-image:url('https://images.unsplash.com/photo-1606131731446-5568d87113aa?auto=format&fit=crop&w=1800&q=80')"></div>
+    <div class="container" data-reveal>
+      <h2>ÇA VOUS MET <span class="hl">L'EAU</span> À LA BOUCHE&nbsp;?</h2>
+      <p>Le mieux, c'est de goûter. Appelez-nous ou venez nous voir.</p>
+      <div class="cta-band__actions">
+        <a class="btn" href="tel:+33327210912">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Appeler le resto
+        </a>
+        <a class="btn btn--ghost" href="https://www.google.com/maps/search/?api=1&query=9+Place+du+11+novembre+59230+Saint-Amand-les-Eaux" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Voir l'itinéraire
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="index.html" class="brand"><img src="img/logobestburger.jpeg" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" /></a>
+          <p>Burgers, tacos et snacks généreux à Saint-Amand-les-Eaux. Sur place, à emporter ou en livraison.</p>
+        </div>
+        <div>
+          <h5>Navigation</h5>
+          <div class="footer__links">
+            <a href="index.html">Accueil</a>
+            <a href="menu.html">Menu</a>
+            <a href="galerie.html">Galerie</a>
+            <a href="contact.html">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h5>Suivez-nous</h5>
+          <div class="socials">
+            <a href="https://www.facebook.com/BESTBURGER.FR" aria-label="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="https://www.snapchat.com/add/BESTBURGER59230" aria-label="Snapchat" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.5 0 4.5 2 4.5 4.5 0 1 .1 2 .3 2.6.3.1.7.1 1 0 .5-.2 1.2-.4 1.6.2.3.4.1.9-.4 1.2-.4.2-1 .4-1.4.7-.3.2-.2.5-.1.8.5 1.2 1.6 2.2 2.9 2.6.4.1.6.4.4.8-.3.6-1.4.9-2.3 1-.1.4-.1.8-.4 1-.3.1-.8 0-1.3-.1-.7-.1-1.5-.2-2.3.1-.5.2-.9.6-1.3 1-.6.5-1.2 1-2.3 1s-1.7-.5-2.3-1c-.4-.4-.8-.8-1.3-1-.8-.3-1.6-.2-2.3-.1-.5.1-1 .2-1.3.1-.3-.2-.3-.6-.4-1-.9-.1-2-.4-2.3-1-.2-.4 0-.7.4-.8 1.3-.4 2.4-1.4 2.9-2.6.1-.3.2-.6-.1-.8-.4-.3-1-.5-1.4-.7-.5-.3-.7-.8-.4-1.2.4-.6 1.1-.4 1.6-.2.3.1.7.1 1 0 .2-.6.3-1.6.3-2.6C7.5 4 9.5 2 12 2z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© <span data-year>2026</span> BEST BURGER — 9 Place du 11 novembre, 59230 Saint-Amand-les-Eaux.</span>
+        <span>Fait avec gourmandise.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== LIGHTBOX ===== -->
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Image agrandie">
+    <button class="lightbox__close" aria-label="Fermer">&times;</button>
+    <img src="" alt="" />
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
