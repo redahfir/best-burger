@@ -24,19 +24,31 @@
     const toggle = document.querySelector(".nav-toggle");
     const links = document.querySelector(".nav-links");
     if (toggle && links) {
-      toggle.addEventListener("click", () => {
-        const open = links.classList.toggle("open");
+      const setOpen = (open) => {
+        links.classList.toggle("open", open);
         toggle.classList.toggle("open", open);
         toggle.setAttribute("aria-expanded", String(open));
-        document.body.style.overflow = open ? "hidden" : "";
-      });
+        toggle.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+        // classe sur <html> : bloque aussi le défilement sur iOS Safari
+        document.documentElement.classList.toggle("nav-open", open);
+      };
+      toggle.addEventListener("click", () => setOpen(!links.classList.contains("open")));
       links.querySelectorAll("a").forEach((a) =>
-        a.addEventListener("click", () => {
-          links.classList.remove("open");
-          toggle.classList.remove("open");
-          document.body.style.overflow = "";
-        })
+        a.addEventListener("click", () => setOpen(false))
       );
+      // Tap en dehors du panneau ou touche Échap : on ferme
+      document.addEventListener("click", (e) => {
+        if (links.classList.contains("open") && !links.contains(e.target) && !toggle.contains(e.target)) {
+          setOpen(false);
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") setOpen(false);
+      });
+      // Passage en paysage / redimensionnement vers la version bureau
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 760) setOpen(false);
+      });
     }
 
     /* ---------- Reveal au scroll ---------- */
