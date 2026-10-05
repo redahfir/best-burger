@@ -1,7 +1,7 @@
 /* ============================================================
    BEST BURGER — Feuille de style globale
    Palette : Noir / Blanc / Jaune
-   Style : artisanal & minimaliste — animations spectaculaires
+   Style : fast-food contemporain — burgers & tacos
    ============================================================ */
 
 /* ---------- Variables ---------- */
@@ -269,11 +269,18 @@ ul { list-style: none; }
 }
 .hero__bg {
   position: absolute;
-  inset: -8% 0 0 0;
+  inset: 0;
   z-index: -2;
   background-size: cover;
   background-position: center;
-  will-change: transform;
+}
+.hero--home .hero__bg {
+  background-image: url('../img/ambiance/accueil-tacos-burgers.webp');
+  background-position: center 65%;
+}
+.hero--page .hero__bg {
+  background-image: url('../img/ambiance/fond-pages-tacos.webp');
+  background-position: center 60%;
 }
 .hero__bg::after {
   content: "";
@@ -281,9 +288,9 @@ ul { list-style: none; }
   inset: 0;
   background: linear-gradient(
     100deg,
-    rgba(13, 13, 13, 0.96) 0%,
-    rgba(13, 13, 13, 0.82) 42%,
-    rgba(13, 13, 13, 0.45) 100%
+    rgba(13, 13, 13, 0.86) 0%,
+    rgba(13, 13, 13, 0.66) 42%,
+    rgba(13, 13, 13, 0.18) 100%
   );
 }
 .hero__noise {
@@ -295,6 +302,7 @@ ul { list-style: none; }
   pointer-events: none;
 }
 .hero__content { max-width: 760px; padding-top: 100px; padding-bottom: 48px; }
+.hero--home .hero__content { max-width: var(--maxw); }
 .hero__title {
   font-family: var(--font-display);
   text-transform: uppercase;
@@ -813,9 +821,10 @@ ul { list-style: none; }
 }
 .cta-band__bg {
   position: absolute; inset: 0; z-index: -2;
+  background-image: url('../img/ambiance/fond-pages-tacos.webp');
   background-size: cover; background-position: center;
 }
-.cta-band__bg::after { content: ""; position: absolute; inset: 0; background: rgba(13,13,13,0.85); }
+.cta-band__bg::after { content: ""; position: absolute; inset: 0; background: rgba(13,13,13,0.65); }
 .cta-band h2 { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(2.2rem, 6vw, 4.5rem); line-height: 0.95; }
 .cta-band .hl { color: var(--yellow); }
 .cta-band p { color: var(--cream); margin: 18px auto 32px; max-width: 50ch; }
@@ -889,6 +898,25 @@ ul { list-style: none; }
 }
 
 @media (max-width: 760px) {
+  /* Le repas reste visible sous le texte, sans recadrage vertical excessif. */
+  .hero--home { align-items: flex-start; }
+  .hero--home .hero__content {
+    padding-top: calc(130px + env(safe-area-inset-top));
+    padding-bottom: clamp(250px, 65vw, 420px);
+  }
+  .hero--home .hero__bg {
+    inset: auto 0 0;
+    height: clamp(330px, 85vw, 580px);
+    background-position: center bottom;
+  }
+  .hero--home .hero__bg::after {
+    background: linear-gradient(to bottom, #0d0d0d 0%, rgba(13,13,13,0.55) 24%, rgba(13,13,13,0.08) 60%, rgba(13,13,13,0.2) 100%);
+  }
+  .hero--home .hero__scroll { display: none; }
+  .hero--page .hero__bg { background-position: 75% center; }
+  .hero--page .hero__bg::after {
+    background: linear-gradient(100deg, rgba(13,13,13,0.88), rgba(13,13,13,0.62));
+  }
   .nav-links {
     position: fixed;
     inset: 0 0 0 auto;

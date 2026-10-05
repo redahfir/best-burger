@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/jpeg" href="img/logobestburger.jpeg" />
   <link rel="apple-touch-icon" href="img/logobestburger.jpeg" />
+  <link rel="preload" as="image" href="img/ambiance/fond-pages-tacos.webp" type="image/webp" fetchpriority="high" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -33,8 +34,8 @@
   </header>
 
   <!-- ===== PAGE HERO ===== -->
-  <section class="hero" style="min-height:55vh;min-height:55svh">
-    <div class="hero__bg" data-parallax="0.15" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1800&q=80')"></div>
+  <section class="hero hero--page" style="min-height:55vh;min-height:55svh">
+    <div class="hero__bg" aria-hidden="true"></div>
     <div class="hero__noise"></div>
     <div class="container hero__content" style="padding-top:90px">
       <p class="eyebrow" data-reveal>Nous trouver</p>
