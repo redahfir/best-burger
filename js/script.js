@@ -57,7 +57,7 @@
       document.addEventListener("keydown", (e) => {
         if (!links.classList.contains("open")) return;
         if (e.key === "Escape") setOpen(false, true);
-        else trapFocus(e, [...links.querySelectorAll("a")].filter(a => a.getClientRects().length).concat(toggle));
+        else trapFocus(e, [...links.querySelectorAll("a")].filter(a => a.getClientRects().length).concat([...document.querySelectorAll(".theme-toggle:not([hidden])")], toggle));
       });
       window.addEventListener("resize", () => {
         if (!compactNav.matches) setOpen(false);

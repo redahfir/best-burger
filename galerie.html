@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0d0d0d" />
+  <script src="js/theme.js"></script>
   <title>Galerie — BEST BURGER</title>
   <meta name="description" content="La galerie BEST BURGER : nos burgers, nos plats et l'ambiance du resto en images." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,9 +28,15 @@
         <a href="contact.html">Contact</a>
         <span class="nav-cta"><a class="btn" href="tel:+33327210912">03 27 21 09 12</a></span>
       </nav>
-      <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Activer le mode clair" title="Activer le mode clair" hidden>
+          <svg class="theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+          <svg class="theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.9 13.2A9 9 0 0 1 10.8 3.1 9 9 0 1 0 20.9 13.2Z"/></svg>
+        </button>
+        <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
   </header>
 
