@@ -1,185 +1,164 @@
-/* ============================================================
-   BEST BURGER — JS global
-   Nav, scroll reveal, parallax, compteurs, menu, galerie
-   ============================================================ */
+/* BEST BURGER — navigation, animations légères, carte et galerie. */
 (function () {
   "use strict";
-
-  const onReady = (fn) =>
-    document.readyState !== "loading"
-      ? fn()
-      : document.addEventListener("DOMContentLoaded", fn);
+  const onReady = (fn) => document.readyState !== "loading"
+    ? fn() : document.addEventListener("DOMContentLoaded", fn);
 
   onReady(function () {
-    /* ---------- Header au scroll ---------- */
+    const root = document.documentElement;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compactNav = window.matchMedia("(max-width: 980px)");
     const header = document.querySelector(".header");
-    const onScrollHeader = () => {
-      if (!header) return;
-      header.classList.toggle("scrolled", window.scrollY > 30);
+    let scrollPending = false;
+    const updateHeader = () => {
+      if (header) header.classList.toggle("scrolled", window.scrollY > 30);
+      scrollPending = false;
     };
-    onScrollHeader();
-    window.addEventListener("scroll", onScrollHeader, { passive: true });
+    updateHeader();
+    window.addEventListener("scroll", () => {
+      if (!scrollPending) {
+        scrollPending = true;
+        window.requestAnimationFrame(updateHeader);
+      }
+    }, { passive: true });
 
-    /* ---------- Menu mobile ---------- */
+    // Contenir le focus dans un panneau ouvert, y compris avec Maj + Tab.
+    const trapFocus = (event, controls) => {
+      if (event.key !== "Tab" || !controls.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (!controls.includes(document.activeElement) ||
+          (event.shiftKey && document.activeElement === first) ||
+          (!event.shiftKey && document.activeElement === last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
+    };
+
     const toggle = document.querySelector(".nav-toggle");
     const links = document.querySelector(".nav-links");
-    if (toggle && links) {
-      const setOpen = (open) => {
+    if (toggle && links && header) {
+      links.id = "primary-navigation";
+      toggle.setAttribute("aria-controls", links.id);
+      const setOpen = (open, restoreFocus = false) => {
         links.classList.toggle("open", open);
         toggle.classList.toggle("open", open);
+        root.classList.toggle("nav-open", open);
         toggle.setAttribute("aria-expanded", String(open));
         toggle.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
-        // classe sur <html> : bloque aussi le défilement sur iOS Safari
-        document.documentElement.classList.toggle("nav-open", open);
+        if (open) links.querySelector("a").focus();
+        else if (restoreFocus) toggle.focus();
       };
       toggle.addEventListener("click", () => setOpen(!links.classList.contains("open")));
-      links.querySelectorAll("a").forEach((a) =>
-        a.addEventListener("click", () => setOpen(false))
-      );
-      // Tap en dehors du panneau ou touche Échap : on ferme
+      links.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
       document.addEventListener("click", (e) => {
-        if (links.classList.contains("open") && !links.contains(e.target) && !toggle.contains(e.target)) {
-          setOpen(false);
+        if (links.classList.contains("open") && !links.contains(e.target) && !toggle.contains(e.target)) setOpen(false, true);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (!links.classList.contains("open")) return;
+        if (e.key === "Escape") setOpen(false, true);
+        else trapFocus(e, [...links.querySelectorAll("a")].filter(a => a.getClientRects().length).concat(toggle));
+      });
+      window.addEventListener("resize", () => {
+        if (!compactNav.matches) setOpen(false);
+      });
+      // La navigation reste visible si le script ne se charge pas.
+      header.classList.add("nav-ready");
+    }
+
+    const reveals = document.querySelectorAll("[data-reveal]");
+    if ("IntersectionObserver" in window && !reducedMotion.matches && reveals.length) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove("reveal-pending");
+            entry.target.classList.add("in");
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0 });
+      reveals.forEach((el) => {
+        // Le contenu visible au chargement apparaît immédiatement.
+        if (el.getBoundingClientRect().top >= window.innerHeight) {
+          el.classList.add("reveal-pending");
+          io.observe(el);
         }
       });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") setOpen(false);
-      });
-      // Passage en paysage / redimensionnement vers la version bureau
-      window.addEventListener("resize", () => {
-        if (window.innerWidth > 760) setOpen(false);
-      });
     }
 
-    /* ---------- Reveal au scroll ---------- */
-    const reveals = document.querySelectorAll("[data-reveal]");
-    if ("IntersectionObserver" in window && reveals.length) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add("in");
-              io.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
-      );
-      reveals.forEach((el) => io.observe(el));
-    } else {
-      reveals.forEach((el) => el.classList.add("in"));
-    }
-
-    /* ---------- Parallaxe hero ---------- */
-    const parallaxEls = document.querySelectorAll("[data-parallax]");
-    if (parallaxEls.length) {
-      let ticking = false;
-      const run = () => {
-        const y = window.scrollY;
-        parallaxEls.forEach((el) => {
-          const speed = parseFloat(el.dataset.parallax) || 0.3;
-          el.style.transform = `translate3d(0, ${y * speed}px, 0)`;
+    // Suspendre le bandeau animé lorsqu'il est hors écran ou l'onglet masqué.
+    const marquee = document.querySelector(".marquee");
+    if (marquee) {
+      let visible = true;
+      const updateMarquee = () => marquee.classList.toggle("is-paused", !visible || document.hidden);
+      document.addEventListener("visibilitychange", updateMarquee);
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          visible = entries[0].isIntersecting;
+          updateMarquee();
         });
-        ticking = false;
-      };
-      window.addEventListener(
-        "scroll",
-        () => {
-          if (!ticking) {
-            window.requestAnimationFrame(run);
-            ticking = true;
-          }
-        },
-        { passive: true }
-      );
+        observer.observe(marquee);
+      }
+      updateMarquee();
     }
 
-    /* ---------- Compteurs animés ---------- */
-    const counters = document.querySelectorAll("[data-count]");
-    if (counters.length && "IntersectionObserver" in window) {
-      const animate = (el) => {
-        const target = parseFloat(el.dataset.count);
-        const suffix = el.dataset.suffix || "";
-        const dur = 1600;
-        const start = performance.now();
-        const step = (now) => {
-          const p = Math.min((now - start) / dur, 1);
-          const eased = 1 - Math.pow(1 - p, 3);
-          const val = target * eased;
-          el.textContent =
-            (Number.isInteger(target) ? Math.round(val) : val.toFixed(1)) +
-            suffix;
-          if (p < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      };
-      const cio = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              animate(e.target);
-              cio.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.5 }
-      );
-      counters.forEach((c) => cio.observe(c));
-    }
-
-    /* ---------- Filtres du menu ---------- */
     const tabs = document.querySelectorAll(".menu-tab");
     const cards = document.querySelectorAll(".menu-card");
-    if (tabs.length && cards.length) {
-      tabs.forEach((tab) => {
-        tab.addEventListener("click", () => {
-          tabs.forEach((t) => t.classList.remove("active"));
-          tab.classList.add("active");
-          const cat = tab.dataset.cat;
-          cards.forEach((card) => {
-            const show = cat === "all" || card.dataset.cat === cat;
-            card.style.display = show ? "" : "none";
-          });
+    tabs.forEach((tab) => {
+      tab.setAttribute("aria-pressed", String(tab.classList.contains("active")));
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => {
+          t.classList.toggle("active", t === tab);
+          t.setAttribute("aria-pressed", String(t === tab));
+        });
+        cards.forEach((card) => {
+          card.style.display = tab.dataset.cat === "all" || card.dataset.cat === tab.dataset.cat ? "" : "none";
         });
       });
-    }
+    });
 
-    /* ---------- Lightbox galerie ---------- */
-    const galleryItems = document.querySelectorAll(".gallery-item img");
     const lightbox = document.querySelector(".lightbox");
-    if (galleryItems.length && lightbox) {
+    if (lightbox) {
       const lbImg = lightbox.querySelector("img");
       const close = lightbox.querySelector(".lightbox__close");
-      const openLb = (src, alt) => {
-        lbImg.src = src;
-        lbImg.alt = alt || "";
-        lightbox.classList.add("open");
-        document.body.style.overflow = "hidden";
-      };
+      let opener = null;
       const closeLb = () => {
         lightbox.classList.remove("open");
-        document.body.style.overflow = "";
+        root.classList.remove("lightbox-open");
+        if (opener) opener.focus();
       };
-      galleryItems.forEach((img) =>
-        img.addEventListener("click", () =>
-          openLb(img.dataset.full || img.src, img.alt)
-        )
-      );
-      close.addEventListener("click", closeLb);
-      lightbox.addEventListener("click", (e) => {
-        if (e.target === lightbox) closeLb();
+      document.querySelectorAll(".gallery-item").forEach((item) => {
+        const img = item.querySelector("img");
+        if (!img) return;
+        item.setAttribute("role", "button");
+        item.setAttribute("tabindex", "0");
+        item.setAttribute("aria-label", "Agrandir : " + img.alt);
+        item.setAttribute("aria-haspopup", "dialog");
+        const open = () => {
+          opener = item;
+          lbImg.src = img.dataset.full || img.src;
+          lbImg.alt = img.alt;
+          lightbox.classList.add("open");
+          root.classList.add("lightbox-open");
+          close.focus();
+        };
+        item.addEventListener("click", open);
+        item.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+        });
       });
+      close.addEventListener("click", closeLb);
+      lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLb(); });
       document.addEventListener("keydown", (e) => {
+        if (!lightbox.classList.contains("open")) return;
         if (e.key === "Escape") closeLb();
+        else trapFocus(e, [close]);
       });
     }
 
-    /* ---------- Année footer ---------- */
-    const yearEl = document.querySelector("[data-year]");
-    if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-    /* ---------- Surligne le jour courant (horaires) ---------- */
-    const todayRow = document.querySelector(`[data-day="${new Date().getDay()}"]`);
-    if (todayRow) todayRow.classList.add("today");
+    const year = document.querySelector("[data-year]");
+    if (year) year.textContent = new Date().getFullYear();
+    const today = document.querySelector(`[data-day="${new Date().getDay()}"]`);
+    if (today) today.classList.add("today");
   });
 })();

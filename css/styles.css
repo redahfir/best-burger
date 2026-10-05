@@ -48,6 +48,20 @@ body {
 }
 
 img { max-width: 100%; display: block; }
+button { font: inherit; touch-action: manipulation; }
+button, a { -webkit-tap-highlight-color: rgba(255, 206, 0, 0.15); }
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 5px;
+}
+.container, .menu-card, .extras__card, .info-card, .footer__grid > *, .info-row > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.btn { max-width: 100%; min-height: 44px; justify-content: center; text-align: center; }
+.btn svg, .eyebrow::before { flex-shrink: 0; }
+.nav-toggle, .lightbox__close { min-width: 44px; min-height: 44px; }
+.nav-toggle { align-items: center; justify-content: center; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
@@ -303,6 +317,7 @@ ul { list-style: none; }
 }
 .hero__content { max-width: 760px; padding-top: 100px; padding-bottom: 48px; }
 .hero--home .hero__content { max-width: var(--maxw); }
+.hero--page .hero__content { padding-top: calc(110px + env(safe-area-inset-top, 0px)); }
 .hero__title {
   font-family: var(--font-display);
   text-transform: uppercase;
@@ -311,7 +326,7 @@ ul { list-style: none; }
   line-height: 0.86;
   letter-spacing: 1px;
 }
-.hero__title .hl { color: var(--yellow); display: inline-block; }
+.hero__title .hl { color: var(--yellow); display: inline-block; max-width: 100%; }
 .hero__sub {
   margin: 26px 0 36px;
   font-size: clamp(1.05rem, 2.2vw, 1.3rem);
@@ -594,7 +609,7 @@ ul { list-style: none; }
 /* Extras : viandes / sauces / suppléments */
 .extras {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: 22px;
   margin-top: 26px;
 }
@@ -709,6 +724,7 @@ ul { list-style: none; }
 .gallery-item:hover img { transform: scale(1.08); }
 .gallery-item:hover::after { opacity: 1; }
 .gallery-item:hover .cap { transform: translateY(0); opacity: 1; }
+.gallery-item:focus-visible .cap, .gallery-item:focus-visible::after { opacity: 1; transform: none; }
 
 .gallery-item.tall { grid-row: span 2; }
 .gallery-item.wide { grid-column: span 2; }
@@ -758,7 +774,7 @@ ul { list-style: none; }
    ============================================================ */
 .contact-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
   gap: clamp(28px, 5vw, 60px);
   align-items: stretch;
 }
@@ -870,10 +886,11 @@ ul { list-style: none; }
    REVEAL ANIMATIONS
    ============================================================ */
 [data-reveal] {
-  opacity: 0;
-  transform: translateY(38px);
+  opacity: 1;
+  transform: none;
   transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
 }
+[data-reveal].reveal-pending { opacity: 0; transform: translateY(24px); }
 [data-reveal].in { opacity: 1; transform: none; }
 [data-reveal][data-delay="1"] { transition-delay: 0.1s; }
 [data-reveal][data-delay="2"] { transition-delay: 0.2s; }
@@ -882,7 +899,7 @@ ul { list-style: none; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
-  [data-reveal] { opacity: 1; transform: none; }
+  [data-reveal], [data-reveal].reveal-pending { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
 }
 
@@ -917,32 +934,6 @@ ul { list-style: none; }
   .hero--page .hero__bg::after {
     background: linear-gradient(100deg, rgba(13,13,13,0.88), rgba(13,13,13,0.62));
   }
-  .nav-links {
-    position: fixed;
-    inset: 0 0 0 auto;
-    width: min(80vw, 320px);
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 40px;
-    background: var(--black-soft);
-    border-left: 1px solid var(--grey-line);
-    transform: translateX(100%);
-    visibility: hidden;
-    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), visibility 0s linear 0.45s;
-  }
-  .nav-links.open {
-    transform: translateX(0);
-    visibility: visible;
-    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6); /* assombrit la page derrière */
-    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
-  }
-  html.nav-open, html.nav-open body { overflow: hidden; }
-  .nav-links a { font-size: 1.3rem; padding: 12px 0; }
-  .nav-links a::after { left: 0; right: 0; }
-  .nav-cta { display: none; }
-  .nav-toggle { display: flex; }
   .footer__grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-auto-rows: 170px; gap: 12px; }
   .menu-card__img { width: 96px; height: 96px; }
@@ -976,17 +967,6 @@ ul { list-style: none; }
 .footer { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
 .lightbox__close { top: calc(22px + env(safe-area-inset-top)); right: calc(26px + env(safe-area-inset-right)); }
 
-/* Menu mobile : défilable si l'écran est bas (téléphone en paysage) */
-@media (max-width: 760px) {
-  .nav-links {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    padding-top: calc(40px + env(safe-area-inset-top));
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
-  }
-}
-
 /* Écrans peu hauts : l'indicateur « Défiler » chevaucherait les boutons */
 @media (max-height: 740px), (max-width: 380px) {
   .hero__scroll { display: none; }
@@ -1008,3 +988,64 @@ ul { list-style: none; }
 @media (min-width: 1800px) {
   :root { --maxw: 1400px; }
 }
+
+/* Navigation compacte dès la tablette ; accessible sans JavaScript. */
+@media (max-width: 980px) {
+  .header:not(.nav-ready) { position: relative; background: var(--black-soft); }
+  .header:not(.nav-ready) .nav { height: auto; min-height: 78px; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+  .header:not(.nav-ready) .nav-links { flex-wrap: wrap; }
+  .nav-ready .nav-links {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(80vw, 320px);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 100px 28px 32px;
+    background: var(--black-soft);
+    border-left: 1px solid var(--grey-line);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), visibility 0s linear 0.45s;
+  }
+  .nav-ready .nav-links.open {
+    transform: translateX(0);
+    visibility: visible;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6); /* assombrit la page derrière */
+    transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+  }
+  html.nav-open, html.nav-open body { overflow: hidden; }
+  .nav-ready .nav-links a { font-size: 1.3rem; padding: 12px 0; }
+  .nav-ready .nav-links a::after { left: 0; right: 0; }
+  .nav-cta { display: none; }
+  .nav-ready .nav-toggle { display: flex; }
+  .nav-ready .nav-links {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-top: calc(100px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  }
+  .nav-ready .nav-links > a { flex-shrink: 0; min-height: 44px; }
+}
+
+@media (max-width: 420px) {
+  .extras__card { padding: 24px 16px; }
+  .extras__card h3 { flex-wrap: wrap; }
+  .hero__actions .btn, .contact-actions .btn, .cta-band__actions .btn { width: 100%; }
+  .section-title { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+  .hours-table td { font-size: 0.85rem; }
+  .hours-table td:first-child { padding-right: 8px; }
+}
+
+/* Limiter les calculs graphiques sur les appareils tactiles. */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .hero__noise { display: none; }
+  .header.scrolled::before { background: rgba(13,13,13,0.97); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .ingredient img, .gallery-item img { filter: none; }
+}
+.lightbox { padding: 70px 20px 24px; padding-top: calc(70px + env(safe-area-inset-top, 0px)); }
+.lightbox img { max-width: 100%; max-height: calc(100vh - 110px); max-height: calc(100svh - 110px); object-fit: contain; }
+html.lightbox-open, html.lightbox-open body { overflow: hidden; }
+.marquee.is-paused .marquee__track { animation-play-state: paused; }
