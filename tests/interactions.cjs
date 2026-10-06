@@ -30,8 +30,13 @@ function setup({ reduced = false, observer = true } = {}) {
   const cards = [element(), element()]; cards[0].dataset.cat = 'burgers'; cards[1].dataset.cat = 'tacos';
   const reveal = element(), marquee = element(), lightbox = element(), close = element(), img = element(), item = element();
   img.alt = 'Tacos'; img.src = 'tacos.webp'; item.selectors = { img }; lightbox.selectors = { img: element(), '.lightbox__close': close };
+  const map = element(), mapButton = element(), consent = element();
+  map.dataset.mapSrc = 'https://maps.example/embed'; map.dataset.mapTitle = 'Plan';
+  map.selectors = { '[data-map-load]': mapButton, '.map-consent': consent }; mapButton.hidden = true;
+  map.appendChild = child => { map.children.push(child); };
   document = { ...element(), readyState: 'complete', documentElement: element(), hidden: false,
-    querySelector(s) { return { '.header': header, '.nav-toggle': toggle, '.nav-links': links, '.marquee': marquee, '.lightbox': lightbox }[s] || null; },
+    createElement: tag => ({ ...element(), tagName: tag.toUpperCase() }),
+    querySelector(s) { return { '.header': header, '.nav-toggle': toggle, '.nav-links': links, '.marquee': marquee, '.lightbox': lightbox, '[data-map-src]': map }[s] || null; },
     querySelectorAll(s) { return { '[data-reveal]': [reveal], '.menu-tab': tabs, '.menu-card': cards, '.gallery-item': [item] }[s] || []; }
   };
   const compact = { matches: true }, observers = [];
@@ -39,8 +44,19 @@ function setup({ reduced = false, observer = true } = {}) {
   class IO { constructor(callback, options) { this.callback = callback; this.options = options; this.targets = []; observers.push(this); } observe(el) { this.targets.push(el); } unobserve() {} }
   if (observer) window.IntersectionObserver = IO;
   vm.runInNewContext(source, { window, document, IntersectionObserver: IO });
-  return { header, toggle, links, document, window, compact, tabs, cards, reveal, marquee, lightbox, close, item, observers };
+  return { header, toggle, links, document, window, compact, tabs, cards, reveal, marquee, lightbox, close, item, observers, map, mapButton, consent };
 }
+
+test('carte Google : rien n’est chargé avant le clic (RGPD)', () => {
+  const f = setup();
+  assert.equal(f.mapButton.hidden, false);
+  assert.equal(f.map.children.length, 0);
+  f.mapButton.fire('click');
+  assert.equal(f.map.children.length, 1);
+  assert.equal(f.map.children[0].tagName, 'IFRAME');
+  assert.equal(f.map.children[0].src, 'https://maps.example/embed');
+  assert.equal(f.consent.hidden, true);
+});
 
 test('navigation tablette : ouverture, focus, Échap et passage au bureau', () => {
   const f = setup(); f.toggle.fire('click');

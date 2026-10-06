@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://redahfir.github.io/best-burger/sitemap.xml

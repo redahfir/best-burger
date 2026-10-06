@@ -1,0 +1,11 @@
+# Fichiers sources de travail (photos brutes, flyer, documents) : non publiés
+images/
+
+# Anciennes images remplacées par img/produits/*.webp
+img/burger-*.png
+img/menu-enfant.png
+img/tacos.png
+
+# Système
+Thumbs.db
+.DS_Store

@@ -3,18 +3,19 @@
 Exécuter les tests de comportement sans dépendances :
 
 ```sh
-node --test tests/interactions.cjs
+node --test tests/interactions.cjs tests/theme.cjs
 ```
 
-Ils couvrent la navigation, le focus clavier, les filtres, la galerie et la suspension des animations. Le DOM simulé ne vérifie pas la mise en page ni le rendu d’un navigateur.
+Ils couvrent la navigation, le focus clavier, les filtres, la galerie, la carte
+chargée à la demande, la suspension des animations et le thème clair/sombre.
+Le DOM simulé ne vérifie pas la mise en page ni le rendu d’un navigateur.
 
-Contrôle visuel à effectuer dans Chrome/Edge, Firefox et Safari, dont iOS et Android :
+Contrôle visuel automatisé effectué dans Edge (moteur Chromium) : les cinq pages
+en clair et en sombre, à 320, 390, 768, 1024 et 1280 pixels, sans débordement
+horizontal, sans erreur JavaScript et avec un contraste suffisant.
 
-- Les quatre pages à 320, 390, 768, 980, 1024 et 1440 pixels, en portrait et paysage.
-- Menu après défilement, écran peu haut, rotation et passage tablette/bureau.
-- Zoom à 200 %, textes et boutons sans débordement horizontal.
-- Tabulation, Maj + Tab, Échap et retour du focus après fermeture de la galerie.
-- JavaScript désactivé : contenus et liens de navigation visibles.
-- Préférence « réduire les animations » et chargement sans polices externes.
+Reste à contrôler à la main sur de vrais appareils :
 
-Le contrôle visuel n’a pas pu être exécuté pendant cette modification : l’accès au navigateur de prévisualisation était bloqué.
+- Safari iOS et Firefox (moteurs différents de Chromium).
+- Zoom à 200 %, rotation de l’écran pendant que le menu est ouvert.
+- Lecteur d’écran (VoiceOver, TalkBack).

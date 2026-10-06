@@ -7,12 +7,23 @@
   <script src="js/theme.js"></script>
   <title>Galerie — BEST BURGER</title>
   <meta name="description" content="La galerie BEST BURGER : nos burgers, nos plats et l'ambiance du resto en images." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/jpeg" href="img/logobestburger.jpeg" />
-  <link rel="apple-touch-icon" href="img/logobestburger.jpeg" />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/plus-jakarta-sans-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/anton-latin.woff2" crossorigin />
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
   <link rel="preload" as="image" href="img/ambiance/fond-pages-tacos.webp" type="image/webp" fetchpriority="high" />
+  <link rel="canonical" href="https://redahfir.github.io/best-burger/galerie.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="BEST BURGER" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Galerie — BEST BURGER" />
+  <meta property="og:description" content="La galerie BEST BURGER : nos burgers, nos plats et l&#x27;ambiance du resto en images." />
+  <meta property="og:url" content="https://redahfir.github.io/best-burger/galerie.html" />
+  <meta property="og:image" content="https://redahfir.github.io/best-burger/img/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Tacos, burger et frites BEST BURGER" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -20,7 +31,7 @@
   <!-- ===== HEADER ===== -->
   <header class="header">
     <div class="container nav">
-      <a href="index.html" class="brand"><img src="img/logobestburger.jpeg" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" /></a>
+      <a href="index.html" class="brand"><img src="img/logo-best-burger.webp" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" width="72" height="72" /></a>
       <nav class="nav-links" aria-label="Navigation principale">
         <a href="index.html">Accueil</a>
         <a href="menu.html">Menu</a>
@@ -41,12 +52,12 @@
   </header>
 
   <!-- ===== PAGE HERO ===== -->
-  <section class="hero hero--page" style="min-height:60vh;min-height:60svh">
+  <section class="hero hero--page">
     <div class="hero__bg" aria-hidden="true"></div>
     <div class="hero__noise"></div>
     <div class="container hero__content">
       <p class="eyebrow" data-reveal>En images</p>
-      <h1 class="hero__title" data-reveal data-delay="1" style="font-size:clamp(2.2rem,9vw,6rem)">LA <span class="hl">GALERIE</span></h1>
+      <h1 class="hero__title" data-reveal data-delay="1">LA <span class="hl">GALERIE</span></h1>
       <p class="hero__sub" data-reveal data-delay="2">Un avant-goût de ce qui vous attend. Cliquez sur une image pour l'agrandir.</p>
     </div>
   </section>
@@ -151,11 +162,11 @@
     <div class="container">
       <div class="footer__grid">
         <div class="footer__brand">
-          <a href="index.html" class="brand"><img src="img/logobestburger.jpeg" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" /></a>
+          <a href="index.html" class="brand"><img src="img/logo-best-burger.webp" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" width="72" height="72" /></a>
           <p>Burgers, tacos et snacks généreux à Saint-Amand-les-Eaux. Sur place, à emporter ou en livraison.</p>
         </div>
         <div>
-          <h5>Navigation</h5>
+          <h2 class="footer__title">Navigation</h2>
           <div class="footer__links">
             <a href="index.html">Accueil</a>
             <a href="menu.html">Menu</a>
@@ -164,7 +175,7 @@
           </div>
         </div>
         <div>
-          <h5>Suivez-nous</h5>
+          <h2 class="footer__title">Suivez-nous</h2>
           <div class="socials">
             <a href="https://www.facebook.com/BESTBURGER.FR" aria-label="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
             <a href="https://www.snapchat.com/add/BESTBURGER59230" aria-label="Snapchat" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.5 0 4.5 2 4.5 4.5 0 1 .1 2 .3 2.6.3.1.7.1 1 0 .5-.2 1.2-.4 1.6.2.3.4.1.9-.4 1.2-.4.2-1 .4-1.4.7-.3.2-.2.5-.1.8.5 1.2 1.6 2.2 2.9 2.6.4.1.6.4.4.8-.3.6-1.4.9-2.3 1-.1.4-.1.8-.4 1-.3.1-.8 0-1.3-.1-.7-.1-1.5-.2-2.3.1-.5.2-.9.6-1.3 1-.6.5-1.2 1-2.3 1s-1.7-.5-2.3-1c-.4-.4-.8-.8-1.3-1-.8-.3-1.6-.2-2.3-.1-.5.1-1 .2-1.3.1-.3-.2-.3-.6-.4-1-.9-.1-2-.4-2.3-1-.2-.4 0-.7.4-.8 1.3-.4 2.4-1.4 2.9-2.6.1-.3.2-.6-.1-.8-.4-.3-1-.5-1.4-.7-.5-.3-.7-.8-.4-1.2.4-.6 1.1-.4 1.6-.2.3.1.7.1 1 0 .2-.6.3-1.6.3-2.6C7.5 4 9.5 2 12 2z"/></svg></a>
@@ -173,7 +184,7 @@
       </div>
       <div class="footer__bottom">
         <span>© <span data-year>2026</span> BEST BURGER — 9 Place du 11 novembre, 59230 Saint-Amand-les-Eaux.</span>
-        <span>Fait avec gourmandise.</span>
+        <span><a href="mentions-legales.html">Mentions légales</a> · Fait avec gourmandise.</span>
       </div>
     </div>
   </footer>
@@ -181,7 +192,7 @@
   <!-- ===== LIGHTBOX ===== -->
   <div class="lightbox" role="dialog" aria-modal="true" aria-label="Image agrandie">
     <button class="lightbox__close" aria-label="Fermer">&times;</button>
-    <img src="" alt="" />
+    <img alt="" />
   </div>
 
   <script src="js/script.js"></script>

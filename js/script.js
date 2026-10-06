@@ -156,6 +156,24 @@
       });
     }
 
+    // Carte Google chargée uniquement à la demande (consentement RGPD).
+    const map = document.querySelector("[data-map-src]");
+    const mapButton = map && map.querySelector("[data-map-load]");
+    if (map && mapButton) {
+      mapButton.hidden = false;
+      mapButton.addEventListener("click", () => {
+        const frame = document.createElement("iframe");
+        frame.src = map.dataset.mapSrc;
+        frame.title = map.dataset.mapTitle || "Plan d'accès";
+        frame.loading = "lazy";
+        frame.referrerPolicy = "no-referrer-when-downgrade";
+        frame.allowFullscreen = true;
+        map.querySelector(".map-consent").hidden = true;
+        map.appendChild(frame);
+        frame.focus();
+      });
+    }
+
     const year = document.querySelector("[data-year]");
     if (year) year.textContent = new Date().getFullYear();
     const today = document.querySelector(`[data-day="${new Date().getDay()}"]`);
