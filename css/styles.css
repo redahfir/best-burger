@@ -195,7 +195,6 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
 }
 .btn:hover { transform: translateY(-3px); box-shadow: 0 14px 34px -10px var(--yellow-glow); }
-.btn:active { transform: translateY(0); }
 .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 .btn--ghost {
@@ -322,6 +321,7 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   display: inline-flex; align-items: center; justify-content: center;
   border: 1px solid var(--grey-line); border-radius: 50%;
   color: var(--white); background: var(--black-soft); cursor: pointer;
+  transition: border-color 0.25s ease, transform 0.3s var(--ease);
 }
 .theme-toggle[hidden] { display: none; }
 .theme-toggle:hover { border-color: var(--yellow); }
@@ -484,7 +484,7 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all 0.3s var(--ease);
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
 }
 .menu-tab:hover { border-color: var(--yellow); }
 .menu-tab.active { background: var(--brand-yellow); color: var(--brand-ink); border-color: var(--yellow); }
@@ -502,9 +502,10 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   border: 1px solid var(--grey-line);
   border-radius: var(--radius);
   padding: 16px;
-  transition: transform 0.4s var(--ease), border-color 0.4s var(--ease);
+  transition: border-color 0.4s var(--ease);
 }
-.menu-card:hover { transform: translateY(-5px); border-color: var(--yellow); }
+/* La carte n'est pas cliquable : elle s'éclaire sans se soulever comme un bouton. */
+.menu-card:hover { border-color: var(--yellow); }
 /* Photos produits détourées (fond transparent) posées sur un halo */
 .menu-card__img {
   flex: none;
@@ -679,7 +680,7 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   color: #ffffff; /* posée sur le dégradé sombre */
   transform: translateY(10px);
   opacity: 0;
-  transition: all 0.4s var(--ease);
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .gallery-item:hover img { transform: scale(1.08); }
 .gallery-item:hover::after { opacity: 1; }
@@ -691,15 +692,22 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  display: none;
+  display: grid;
   place-items: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
   padding: 70px 20px 24px;
   padding-top: calc(70px + env(safe-area-inset-top, 0px));
   background: rgba(7, 7, 7, 0.95);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
 }
-.lightbox.open { display: grid; animation: fade 0.3s ease; }
+.lightbox.open {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s var(--ease);
+}
 .lightbox img {
   max-width: 100%;
   max-height: calc(100vh - 110px);
@@ -708,7 +716,17 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   border-radius: 12px;
   padding: clamp(16px, 3vw, 36px);
   background: radial-gradient(circle at 50% 55%, rgba(255, 206, 0, 0.12), var(--black-card) 72%);
+  /* La photo grandit depuis la vignette touchée et y retourne à la fermeture
+     (origine posée par script.js) ; un glissement vers le bas la ferme. */
+  transform: scale(0.9);
+  transition: transform 0.3s var(--ease);
+  touch-action: pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
 }
+.lightbox.open img { transform: none; transition: transform 0.4s var(--ease); }
+.lightbox img.is-dragging { transition: none; cursor: grabbing; }
 .lightbox__close {
   position: absolute;
   top: calc(22px + env(safe-area-inset-top));
@@ -722,7 +740,6 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   line-height: 1;
   cursor: pointer;
 }
-@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 html.lightbox-open, html.lightbox-open body { overflow: hidden; }
 
 /* ============================================================
@@ -938,6 +955,7 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
   border-radius: 12px;
   font-weight: 600;
   line-height: 1.1;
+  transition: border-color 0.25s ease, transform 0.3s var(--ease);
 }
 .wallet-btn svg { width: 26px; height: 26px; flex: none; }
 .wallet-btn small { display: block; font-size: 0.7rem; font-weight: 500; opacity: 0.85; }
@@ -1032,7 +1050,7 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
   display: grid; place-items: center;
   border: 1px solid var(--grey-line);
   border-radius: 50%;
-  transition: all 0.3s var(--ease);
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
 }
 .socials a:hover { background: var(--brand-yellow); color: var(--brand-ink); border-color: var(--yellow); transform: translateY(-3px); }
 .socials svg { width: 18px; height: 18px; }
@@ -1182,6 +1200,29 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
   .hero__noise { display: none; }
   .header.scrolled::before { background: rgba(13, 13, 13, 0.97); -webkit-backdrop-filter: none; backdrop-filter: none; }
   .ingredient img, .gallery-item img { filter: none; }
+}
+
+/* Retour immédiat à l'appui (et non au relâchement) : le bouton s'enfonce
+   dès que le doigt ou la souris le presse. Placé après les règles :hover. */
+.btn:active,
+.menu-tab:active,
+.socials a:active,
+.wallet-btn:active,
+.theme-toggle:active { transform: scale(0.96); transition-duration: 0.1s; transition-timing-function: ease-out; }
+.gallery-item:active img { transform: scale(0.97); transition: transform 0.1s ease-out; }
+.form .btn:disabled { transform: none; }
+
+/* Transparence réduite : surfaces pleines, sans flou */
+@media (prefers-reduced-transparency: reduce) {
+  .header.scrolled::before { background: var(--black-soft); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .lightbox { background: #070707; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* Contraste renforcé : bordures nettes */
+@media (prefers-contrast: more) {
+  :root { --grey-line: rgba(255, 255, 255, 0.45); }
+  :root[data-theme="light"] { --grey-line: rgba(39, 30, 16, 0.6); }
+  .header.scrolled::before { background: var(--black); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
