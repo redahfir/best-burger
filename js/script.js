@@ -9,6 +9,8 @@
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const compactNav = window.matchMedia("(max-width: 980px)");
     const header = document.querySelector(".header");
+    // Safari iOS n'applique :active (retour à l'appui) que si la page écoute le toucher.
+    document.addEventListener("touchstart", () => {}, { passive: true });
     let scrollPending = false;
     const updateHeader = () => {
       if (header) header.classList.toggle("scrolled", window.scrollY > 30);
@@ -136,6 +138,14 @@
         item.setAttribute("aria-haspopup", "dialog");
         const open = () => {
           opener = item;
+          // La photo s'agrandit depuis la vignette touchée (et y retourne à la fermeture).
+          const r = item.getBoundingClientRect();
+          if (r.width && window.innerWidth) {
+            lbImg.style.transformOrigin =
+              `${Math.round(r.left + r.width / 2 - window.innerWidth / 2)}px ${Math.round(r.top + r.height / 2 - window.innerHeight / 2)}px`;
+          }
+          lbImg.style.transform = "";
+          lightbox.style.opacity = "";
           lbImg.src = img.dataset.full || img.src;
           lbImg.alt = img.alt;
           lightbox.classList.add("open");
@@ -148,6 +158,61 @@
         });
       });
       close.addEventListener("click", closeLb);
+
+      // Glisser la photo vers le bas pour fermer : elle suit le doigt 1:1, résiste
+      // vers le haut, et un geste rapide suffit (projection de l'élan au relâchement).
+      let drag = null;
+      lbImg.draggable = false; // sinon le glisser-déposer natif de l'image interrompt le geste
+      const rubberband = (d, size) => (d * size * 0.55) / (size + 0.55 * Math.abs(d));
+      const settle = () => {
+        lbImg.classList.remove("is-dragging");
+        lbImg.style.transform = "";
+        lightbox.style.opacity = "";
+      };
+      lbImg.addEventListener("pointerdown", (e) => {
+        if (!lightbox.classList.contains("open") || e.button > 0) return;
+        drag = { id: e.pointerId, y0: e.clientY, dy: 0, active: false, history: [{ y: e.clientY, t: e.timeStamp }] };
+      });
+      lbImg.addEventListener("pointermove", (e) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const dy = e.clientY - drag.y0;
+        if (!drag.active) {
+          if (Math.abs(dy) < 10) return; // seuil avant de considérer un glissement
+          drag.active = true;
+          drag.y0 = e.clientY - Math.sign(dy) * 10;
+          lbImg.setPointerCapture(e.pointerId);
+          lbImg.classList.add("is-dragging");
+        }
+        const h = window.innerHeight || 800;
+        drag.dy = e.clientY - drag.y0;
+        const y = drag.dy > 0 ? drag.dy : rubberband(drag.dy, h);
+        lbImg.style.transform = `translateY(${y}px) scale(${1 - Math.min(Math.max(y, 0) / h, 1) * 0.15})`;
+        lightbox.style.opacity = String(1 - Math.min(Math.max(y, 0) / h, 1) * 0.6);
+        drag.history.push({ y: e.clientY, t: e.timeStamp });
+        if (drag.history.length > 5) drag.history.shift();
+      });
+      const endDrag = (e) => {
+        if (!drag || e.pointerId !== drag.id) return;
+        const d = drag;
+        drag = null;
+        if (!d.active) return;
+        const first = d.history[0], last = d.history[d.history.length - 1];
+        const velocity = last.t > first.t ? ((last.y - first.y) / (last.t - first.t)) * 1000 : 0; // px/s
+        const projected = d.dy + (velocity / 1000) * 0.99 / (1 - 0.99);
+        if (e.type === "pointerup" && d.dy > 0 && velocity >= 0 && projected > (window.innerHeight || 800) * 0.3) {
+          // La photo sort dans la direction du geste pendant que le fond s'efface.
+          lbImg.classList.remove("is-dragging");
+          lbImg.style.transform = `translateY(${window.innerHeight || 800}px) scale(0.85)`;
+          lightbox.style.opacity = "";
+          closeLb();
+        } else {
+          settle();
+        }
+      };
+      lbImg.addEventListener("pointerup", endDrag);
+      lbImg.addEventListener("pointercancel", endDrag);
+      // Un glissement ne doit pas être pris pour un clic sur le fond.
+      lbImg.addEventListener("click", (e) => e.stopPropagation());
       lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLb(); });
       document.addEventListener("keydown", (e) => {
         if (!lightbox.classList.contains("open")) return;

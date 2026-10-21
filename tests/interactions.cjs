@@ -29,7 +29,7 @@ function setup({ reduced = false, observer = true } = {}) {
   const tabs = [element(['active']), element()]; tabs[0].dataset.cat = 'all'; tabs[1].dataset.cat = 'tacos';
   const cards = [element(), element()]; cards[0].dataset.cat = 'burgers'; cards[1].dataset.cat = 'tacos';
   const reveal = element(), marquee = element(), lightbox = element(), close = element(), img = element(), item = element();
-  img.alt = 'Tacos'; img.src = 'tacos.webp'; item.selectors = { img }; lightbox.selectors = { img: element(), '.lightbox__close': close };
+  img.alt = 'Tacos'; img.src = 'tacos.webp'; item.selectors = { img }; const lbImg = element(); lbImg.setPointerCapture = () => {}; lightbox.selectors = { img: lbImg, '.lightbox__close': close };
   const map = element(), mapButton = element(), consent = element();
   map.dataset.mapSrc = 'https://maps.example/embed'; map.dataset.mapTitle = 'Plan';
   map.selectors = { '[data-map-load]': mapButton, '.map-consent': consent }; mapButton.hidden = true;
@@ -44,7 +44,7 @@ function setup({ reduced = false, observer = true } = {}) {
   class IO { constructor(callback, options) { this.callback = callback; this.options = options; this.targets = []; observers.push(this); } observe(el) { this.targets.push(el); } unobserve() {} }
   if (observer) window.IntersectionObserver = IO;
   vm.runInNewContext(source, { window, document, IntersectionObserver: IO });
-  return { header, toggle, links, document, window, compact, tabs, cards, reveal, marquee, lightbox, close, item, observers, map, mapButton, consent };
+  return { header, toggle, links, document, window, compact, tabs, cards, reveal, marquee, lightbox, lbImg, close, item, observers, map, mapButton, consent };
 }
 
 test('carte Google : rien n’est chargé avant le clic (RGPD)', () => {
@@ -97,4 +97,21 @@ test('animation suspendue hors écran et dans un onglet masqué', () => {
   io.callback([{ isIntersecting: false }]); assert.equal(f.marquee.classList.contains('is-paused'), true);
   io.callback([{ isIntersecting: true }]); assert.equal(f.marquee.classList.contains('is-paused'), false);
   f.document.hidden = true; f.document.fire('visibilitychange'); assert.equal(f.marquee.classList.contains('is-paused'), true);
+});
+
+test('galerie : glisser la photo vers le bas la ferme, un petit glissement la remet en place', () => {
+  const f = setup();
+  const swipe = (to) => {
+    f.item.fire('click');
+    f.lbImg.fire('pointerdown', { pointerId: 1, clientY: 100, button: 0, timeStamp: 0 });
+    [40, 80, to].forEach((y, i) => f.lbImg.fire('pointermove', { pointerId: 1, clientY: 100 + y, timeStamp: (i + 1) * 16 }));
+    f.lbImg.fire('pointerup', { pointerId: 1, type: 'pointerup', clientY: 100 + to, timeStamp: 400 });
+  };
+  swipe(30);
+  assert.equal(f.lightbox.classList.contains('open'), true);
+  assert.equal(f.lbImg.style.transform, '');
+  assert.equal(f.lbImg.classList.contains('is-dragging'), false);
+  swipe(400);
+  assert.equal(f.lightbox.classList.contains('open'), false);
+  assert.equal(f.document.activeElement, f.item);
 });
