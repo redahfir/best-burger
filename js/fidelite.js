@@ -3,7 +3,7 @@
   "use strict";
 
   // Adresse du serveur fidélité (dossier fidelite-api). Vide : la fidélité en ligne reste masquée.
-  const API_URL = "";
+  const API_URL = "https://best-burger.tailf6d117.ts.net";
 
   const CARD_KEY = "best-burger-carte";
   const STAFF_KEY = "best-burger-comptoir";
