@@ -21,6 +21,8 @@ export function loadConfig(env = process.env) {
     port: int(env.PORT, 8787),
     publicUrl,
     siteUrl,
+    // Google télécharge le logo de la carte : il faut une adresse HTTPS publique, même en test local.
+    logoUrl: env.LOGO_URL || "https://redahfir.github.io/best-burger/img/apple-touch-icon.png",
     allowedOrigins: (env.ALLOWED_ORIGINS || new URL(siteUrl).origin).split(",").map(s => s.trim()).filter(Boolean),
     databasePath: env.DATABASE_PATH || "./data/fidelite.sqlite",
     staffSecret: env.STAFF_SECRET || "",

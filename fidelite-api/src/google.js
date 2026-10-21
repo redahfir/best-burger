@@ -17,7 +17,7 @@ export function loyaltyClass(config) {
     id: classId(config.google),
     issuerName: "BEST BURGER",
     programName: "Carte fidélité",
-    programLogo: { sourceUri: { uri: `${config.siteUrl}/img/apple-touch-icon.png` },
+    programLogo: { sourceUri: { uri: config.logoUrl },
       contentDescription: { defaultValue: { language: "fr-FR", value: "Logo BEST BURGER" } } },
     hexBackgroundColor: "#0d0d0d",
     countryCode: "FR",

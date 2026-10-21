@@ -28,6 +28,7 @@ export function testConfig(overrides = {}) {
     port: 0,
     publicUrl: "https://fidelite.example",
     siteUrl: "https://redahfir.github.io/best-burger",
+    logoUrl: "https://redahfir.github.io/best-burger/img/apple-touch-icon.png",
     allowedOrigins: ["https://redahfir.github.io"],
     databasePath: ":memory:",
     staffSecret: "secret-comptoir-123",
