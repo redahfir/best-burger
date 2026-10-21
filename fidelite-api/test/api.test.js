@@ -84,7 +84,28 @@ test("comptoir : trop d'essais avec un mauvais code sont bloqués", async () => 
   const bad = { authorization: "Bearer mauvais-code-000" };
   for (let i = 0; i < 10; i++) assert.equal((await s.api("GET", "/api/comptoir/membres?q=abc", { headers: bad })).status, 401);
   assert.equal((await s.api("GET", "/api/comptoir/membres?q=abc", { headers: bad })).status, 429);
+  // Même le bon code est refusé pendant le blocage : impossible de continuer à deviner.
+  assert.equal((await s.api("GET", "/api/comptoir/membres?q=abc", { headers: staff })).status, 429);
   await s.close();
+});
+
+test("comptoir : une fausse adresse IP envoyée par le client ne contourne pas le blocage", async () => {
+  const s = await startServer({ ...config, trustProxy: true });
+  const bad = n => ({ authorization: "Bearer mauvais-code-000", "x-forwarded-for": `10.0.0.${n}, 203.0.113.7` });
+  for (let i = 0; i < 10; i++) assert.equal((await s.api("GET", "/api/comptoir/membres?q=abc", { headers: bad(i) })).status, 401);
+  assert.equal((await s.api("GET", "/api/comptoir/membres?q=abc", { headers: bad(99) })).status, 429);
+  await s.close();
+});
+
+test("en-têtes de sécurité sur toutes les réponses", async () => {
+  for (const url of ["/sante", "/introuvable"]) {
+    const { headers } = await srv.api("GET", url);
+    assert.equal(headers.get("x-frame-options"), "DENY");
+    assert.equal(headers.get("content-security-policy"), "default-src 'none'; frame-ancestors 'none'");
+    assert.equal(headers.get("referrer-policy"), "no-referrer");
+    assert.match(headers.get("strict-transport-security"), /max-age=/);
+    assert.equal(headers.get("cache-control"), "no-store");
+  }
 });
 
 test("Apple Wallet : .pkpass complet et signature valide", async () => {
