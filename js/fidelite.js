@@ -2,6 +2,9 @@
 (function () {
   "use strict";
 
+  // Pages fidélité jamais affichées dans le cadre d'un autre site (piège au clic sur « supprimer » ou « +1 tampon »).
+  if (window.top !== window.self) { document.documentElement.hidden = true; return; }
+
   // Adresse du serveur fidélité (dossier fidelite-api). Vide : la fidélité en ligne reste masquée.
   const API_URL = "https://best-burger.tailf6d117.ts.net";
 

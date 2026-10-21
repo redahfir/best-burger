@@ -12,14 +12,32 @@ const safeEqual = (a, b) => {
 // Limiteur en mémoire : suffisant pour un seul serveur.
 function limiter(max, windowMs) {
   const hits = new Map();
-  return key => {
-    const t = Date.now();
+  const live = key => {
     const entry = hits.get(key);
-    if (!entry || t > entry.reset) { hits.set(key, { count: 1, reset: t + windowMs }); return true; }
+    if (entry && Date.now() > entry.reset) { hits.delete(key); return null; }
+    return entry;
+  };
+  const hit = key => {
+    const t = Date.now();
+    // Oublie les fenêtres expirées pour que la mémoire ne grossisse pas sans fin.
+    if (hits.size > 10_000) hits.forEach((e, k) => { if (t > e.reset) hits.delete(k); });
+    const entry = live(key);
+    if (!entry) { hits.set(key, { count: 1, reset: t + windowMs }); return true; }
     entry.count += 1;
     return entry.count <= max;
   };
+  hit.blocked = key => (live(key)?.count || 0) >= max;
+  return hit;
 }
+
+// En-têtes de sécurité : l'API ne renvoie que du JSON ou des fichiers, jamais de page à afficher.
+const SECURITY_HEADERS = {
+  "x-content-type-options": "nosniff",
+  "strict-transport-security": "max-age=31536000",
+  "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
+  "x-frame-options": "DENY",
+  "referrer-policy": "no-referrer",
+};
 
 // Réponse avec un statut ou un contenu particulier ; sinon le gestionnaire renvoie du JSON simple.
 const REPLY = Symbol("reply");
@@ -66,7 +84,8 @@ export function createApp({ config, store, wallet, log = console }) {
       .filter(r => r.status === "rejected").forEach(r => log.error("Mise à jour Wallet :", r.reason?.message)));
   };
 
-  const clientIp = req => (config.trustProxy && String(req.headers["x-forwarded-for"] || "").split(",")[0].trim())
+  // Derrière un proxy, seule la dernière adresse est ajoutée par lui ; les précédentes viennent du client.
+  const clientIp = req => (config.trustProxy && String(req.headers["x-forwarded-for"] || "").split(",").at(-1).trim())
     || req.socket.remoteAddress;
 
   function memberFromToken(serial, token) {
@@ -78,9 +97,11 @@ export function createApp({ config, store, wallet, log = console }) {
   function requireStaff(req) {
     const ip = clientIp(req);
     if (!config.staffSecret) throw new HttpError(503, "Le comptoir n'est pas configuré (STAFF_SECRET).");
+    // Le blocage passe avant la vérification : sinon on pourrait continuer à deviner le code.
+    if (staffFailures.blocked(ip)) throw new HttpError(429, "Trop d'essais. Réessayez dans 15 minutes.");
     const auth = String(req.headers.authorization || "");
     if (auth.startsWith("Bearer ") && safeEqual(auth.slice(7), config.staffSecret)) return;
-    if (!staffFailures(ip)) throw new HttpError(429, "Trop d'essais. Réessayez dans 15 minutes.");
+    staffFailures(ip);
     throw new HttpError(401, "Code comptoir incorrect.");
   }
 
@@ -224,7 +245,7 @@ export function createApp({ config, store, wallet, log = console }) {
 
   return async function handle(req, res) {
     const url = new URL(req.url, "http://localhost");
-    res.setHeader("x-content-type-options", "nosniff");
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) res.setHeader(name, value);
     cors(req, res);
     if (req.method === "OPTIONS") { res.writeHead(204).end(); return; }
     try {
@@ -250,7 +271,7 @@ export function createApp({ config, store, wallet, log = console }) {
     } catch (error) {
       const status = error instanceof HttpError ? error.status : 500;
       if (status === 500) log.error(error);
-      res.writeHead(status, { "content-type": "application/json; charset=utf-8" })
+      res.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" })
         .end(JSON.stringify({ erreur: status === 500 ? "Erreur interne, réessayez." : error.message }));
     }
   };
