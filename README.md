@@ -17,7 +17,7 @@ En ligne : https://redahfir.github.io/best-burger/ (GitHub Pages, branche `maste
 | `js/fidelite.js` | Pages fidélité ; l'adresse du serveur se règle en haut du fichier (`API_URL`) |
 | `fidelite-api/` | Serveur de la carte fidélité, hébergé à part (voir son [README](fidelite-api/README.md)) |
 | `fonts/` | Polices hébergées localement (Anton, Plus Jakarta Sans) |
-| `img/produits/` | Photos produits (`*-sm.webp` = vignettes du menu) |
+| `img/produits/` | Photos produits (`*-sm.webp` = vignettes 320 px, `*-md.webp` = 600 px pour la galerie) |
 | `img/ingredients/` | Viandes, sauces, suppléments |
 | `img/ambiance/` | Fonds des en-têtes |
 | `tests/` | Tests de comportement (`node --test tests/interactions.cjs tests/theme.cjs`) |

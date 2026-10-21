@@ -113,6 +113,8 @@
           t.classList.toggle("active", t === tab);
           t.setAttribute("aria-pressed", String(t === tab));
         });
+        // Sur mobile, la catégorie choisie reste entièrement visible dans la barre.
+        if (tab.scrollIntoView) tab.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reducedMotion.matches ? "auto" : "smooth" });
         cards.forEach((card) => {
           card.style.display = tab.dataset.cat === "all" || card.dataset.cat === tab.dataset.cat ? "" : "none";
         });
@@ -132,12 +134,15 @@
       document.querySelectorAll(".gallery-item").forEach((item) => {
         const img = item.querySelector("img");
         if (!img) return;
-        item.setAttribute("role", "button");
-        item.setAttribute("tabindex", "0");
-        item.setAttribute("aria-label", "Agrandir : " + img.alt);
-        item.setAttribute("aria-haspopup", "dialog");
+        // Un vrai bouton posé sur la photo : lu correctement par les lecteurs d'écran.
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "gallery-item__open";
+        button.setAttribute("aria-label", "Agrandir la photo : " + img.alt);
+        button.setAttribute("aria-haspopup", "dialog");
+        item.appendChild(button);
         const open = () => {
-          opener = item;
+          opener = button;
           // La photo s'agrandit depuis la vignette touchée (et y retourne à la fermeture).
           const r = item.getBoundingClientRect();
           if (r.width && window.innerWidth) {
@@ -152,10 +157,7 @@
           root.classList.add("lightbox-open");
           close.focus();
         };
-        item.addEventListener("click", open);
-        item.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
-        });
+        button.addEventListener("click", open);
       });
       close.addEventListener("click", closeLb);
 

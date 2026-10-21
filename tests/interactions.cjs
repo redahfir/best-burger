@@ -29,7 +29,7 @@ function setup({ reduced = false, observer = true } = {}) {
   const tabs = [element(['active']), element()]; tabs[0].dataset.cat = 'all'; tabs[1].dataset.cat = 'tacos';
   const cards = [element(), element()]; cards[0].dataset.cat = 'burgers'; cards[1].dataset.cat = 'tacos';
   const reveal = element(), marquee = element(), lightbox = element(), close = element(), img = element(), item = element();
-  img.alt = 'Tacos'; img.src = 'tacos.webp'; item.selectors = { img }; const lbImg = element(); lbImg.setPointerCapture = () => {}; lightbox.selectors = { img: lbImg, '.lightbox__close': close };
+  img.alt = 'Tacos'; img.src = 'tacos.webp'; item.selectors = { img }; item.appendChild = child => { item.children.push(child); }; const lbImg = element(); lbImg.setPointerCapture = () => {}; lightbox.selectors = { img: lbImg, '.lightbox__close': close };
   const map = element(), mapButton = element(), consent = element();
   map.dataset.mapSrc = 'https://maps.example/embed'; map.dataset.mapTitle = 'Plan';
   map.selectors = { '[data-map-load]': mapButton, '.map-consent': consent }; mapButton.hidden = true;
@@ -44,7 +44,8 @@ function setup({ reduced = false, observer = true } = {}) {
   class IO { constructor(callback, options) { this.callback = callback; this.options = options; this.targets = []; observers.push(this); } observe(el) { this.targets.push(el); } unobserve() {} }
   if (observer) window.IntersectionObserver = IO;
   vm.runInNewContext(source, { window, document, IntersectionObserver: IO });
-  return { header, toggle, links, document, window, compact, tabs, cards, reveal, marquee, lightbox, lbImg, close, item, observers, map, mapButton, consent };
+  const opener = item.children[0];
+  return { header, toggle, links, document, window, compact, tabs, cards, reveal, marquee, lightbox, lbImg, close, item, opener, observers, map, mapButton, consent };
 }
 
 test('carte Google : rien n’est chargé avant le clic (RGPD)', () => {
@@ -77,11 +78,15 @@ test('filtres : tacos puis retour à tous les produits', () => {
   f.tabs[0].fire('click'); assert.equal(f.cards[0].style.display, '');
 });
 test('galerie au clavier : ouverture, focus contenu, fermeture et retour', () => {
-  const f = setup(); f.item.fire('keydown', { key: 'Enter' });
+  const f = setup();
+  // Un vrai bouton (Entrée et Espace le déclenchent nativement) et non une <figure role="button">.
+  assert.equal(f.opener.tagName, 'BUTTON'); assert.equal(f.opener.type, 'button');
+  assert.equal(f.opener.attrs['aria-label'], 'Agrandir la photo : Tacos'); assert.equal(f.item.attrs.role, undefined);
+  f.opener.fire('click');
   assert.equal(f.lightbox.classList.contains('open'), true); assert.equal(f.document.activeElement, f.close);
   const event = f.document.fire('keydown', { key: 'Tab' }); assert.equal(event.prevented, true);
   f.document.fire('keydown', { key: 'Escape' });
-  assert.equal(f.document.activeElement, f.item); assert.equal(f.lightbox.classList.contains('open'), false);
+  assert.equal(f.document.activeElement, f.opener); assert.equal(f.lightbox.classList.contains('open'), false);
 });
 test('révélations : éléments hauts, absence d’observer et mouvements réduits', () => {
   const f = setup(); const io = f.observers.find(o => o.targets.includes(f.reveal));
@@ -102,7 +107,7 @@ test('animation suspendue hors écran et dans un onglet masqué', () => {
 test('galerie : glisser la photo vers le bas la ferme, un petit glissement la remet en place', () => {
   const f = setup();
   const swipe = (to) => {
-    f.item.fire('click');
+    f.opener.fire('click');
     f.lbImg.fire('pointerdown', { pointerId: 1, clientY: 100, button: 0, timeStamp: 0 });
     [40, 80, to].forEach((y, i) => f.lbImg.fire('pointermove', { pointerId: 1, clientY: 100 + y, timeStamp: (i + 1) * 16 }));
     f.lbImg.fire('pointerup', { pointerId: 1, type: 'pointerup', clientY: 100 + to, timeStamp: 400 });
@@ -113,5 +118,5 @@ test('galerie : glisser la photo vers le bas la ferme, un petit glissement la re
   assert.equal(f.lbImg.classList.contains('is-dragging'), false);
   swipe(400);
   assert.equal(f.lightbox.classList.contains('open'), false);
-  assert.equal(f.document.activeElement, f.item);
+  assert.equal(f.document.activeElement, f.opener);
 });

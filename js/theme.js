@@ -3,6 +3,13 @@
   "use strict";
   const key = "best-burger-theme";
   const root = document.documentElement;
+  // Le menu mobile prend sa forme compacte dès le premier affichage ; si script.js
+  // ne s'est pas chargé, la navigation dépliée (sans JavaScript) revient.
+  root.classList.add("js");
+  window.addEventListener("load", () => {
+    const header = document.querySelector(".header");
+    if (header && !header.classList.contains("nav-ready")) root.classList.remove("js");
+  });
   const system = window.matchMedia("(prefers-color-scheme: dark)");
   let choice = null;
   let button = null;

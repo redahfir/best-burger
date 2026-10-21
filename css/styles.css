@@ -647,7 +647,6 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius);
-  cursor: pointer;
   border: 1px solid var(--grey-line);
   background: radial-gradient(ellipse at 50% 58%, rgba(255, 206, 0, 0.14), transparent 62%), var(--black-card);
 }
@@ -685,7 +684,18 @@ a:focus-visible, button:focus-visible, [role="button"]:focus-visible {
 .gallery-item:hover img { transform: scale(1.08); }
 .gallery-item:hover::after { opacity: 1; }
 .gallery-item:hover .cap { transform: translateY(0); opacity: 1; }
-.gallery-item:focus-visible .cap, .gallery-item:focus-visible::after { opacity: 1; transform: none; }
+.gallery-item__open {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  cursor: zoom-in;
+}
+.gallery-item__open:focus-visible { outline: 3px solid var(--yellow); outline-offset: -3px; }
+.gallery-item:focus-within .cap, .gallery-item:focus-within::after { opacity: 1; transform: none; }
 
 /* Visionneuse */
 .lightbox {
@@ -775,6 +785,8 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
 .info-row h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--grey); margin-bottom: 4px; }
 .info-row p, .info-row a { font-size: 1.05rem; font-weight: 600; }
 .info-row a:hover { color: var(--yellow); }
+/* Zone de toucher d'au moins 24 px sans changer l'espacement visible. */
+.info-row a, .footer__bottom a { display: inline-block; padding-block: 8px; margin-block: -8px; }
 .info-row__note { color: var(--grey); font-weight: 500; font-size: 0.92rem; }
 .info-row__body--full { width: 100%; }
 
@@ -1091,13 +1103,15 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 
-  /* Navigation compacte dès la tablette ; reste accessible sans JavaScript. */
-  .header:not(.nav-ready) { position: relative; background: var(--black-soft); }
-  .header:not(.nav-ready) .nav { height: auto; min-height: 78px; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
-  .header:not(.nav-ready) .nav-links { flex-wrap: wrap; }
+  /* Navigation compacte dès la tablette ; reste accessible sans JavaScript.
+     La classe .js est posée par theme.js dans <head> : l'en-tête a sa forme
+     définitive dès le premier affichage, sans décaler la page. */
+  html:not(.js) .header:not(.nav-ready) { position: relative; background: var(--black-soft); }
+  html:not(.js) .header:not(.nav-ready) .nav { height: auto; min-height: 78px; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+  html:not(.js) .header:not(.nav-ready) .nav-links { flex-wrap: wrap; }
   .nav-cta { display: none; }
-  .nav-ready .nav-toggle { display: flex; }
-  .nav-ready .nav-links {
+  .js .header .nav-toggle { display: flex; }
+  .js .header .nav-links {
     position: fixed;
     inset: 0 0 0 auto;
     width: min(80vw, 320px);
@@ -1115,18 +1129,32 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
     visibility: hidden;
     transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), visibility 0s linear 0.45s;
   }
-  .nav-ready .nav-links.open {
+  .js .header .nav-links.open {
     transform: translateX(0);
     visibility: visible;
     box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.6); /* assombrit la page derrière */
     transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
   }
-  .nav-ready .nav-links > a { flex-shrink: 0; min-height: 44px; font-size: 1.3rem; padding: 12px 0; }
-  .nav-ready .nav-links a::after { left: 0; right: 0; }
+  .js .header .nav-links > a { flex-shrink: 0; min-height: 44px; font-size: 1.3rem; padding: 12px 0; }
+  .js .header .nav-links a::after { left: 0; right: 0; }
   html.nav-open, html.nav-open body { overflow: hidden; }
 }
 
 @media (max-width: 760px) {
+  /* Catégories du menu : une seule ligne qui défile, les produits restent visibles. */
+  .menu-tabs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    margin: 28px calc(-1 * var(--gutter)) 32px;
+    padding: 4px var(--gutter);
+    scroll-padding-inline: var(--gutter);
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .menu-tabs::-webkit-scrollbar { display: none; }
+  .menu-tab { flex-shrink: 0; scroll-snap-align: start; padding: 10px 18px; }
   /* Le repas reste visible sous le texte, sans recadrage vertical excessif. */
   .hero--home { align-items: flex-start; }
   .hero--home .hero__content {
