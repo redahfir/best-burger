@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <script src="js/theme.js"></script>
+  <title>Ma carte fidélité — BEST BURGER</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Votre carte fidélité BEST BURGER : tampons, récompenses et ajout à Apple Wallet ou Google Wallet." />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/plus-jakarta-sans-latin.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="fonts/anton-latin.woff2" crossorigin />
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png" />
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+  <link rel="preload" as="image" href="img/ambiance/fond-pages-tacos.webp" type="image/webp" fetchpriority="high" />
+  <link rel="canonical" href="https://redahfir.github.io/best-burger/carte.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="BEST BURGER" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:title" content="Ma carte fidélité — BEST BURGER" />
+  <meta property="og:description" content="Votre carte fidélité BEST BURGER : tampons, récompenses et ajout à Apple Wallet ou Google Wallet." />
+  <meta property="og:url" content="https://redahfir.github.io/best-burger/carte.html" />
+  <meta property="og:image" content="https://redahfir.github.io/best-burger/img/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Tacos, burger et frites BEST BURGER" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="container nav">
+      <a href="index.html" class="brand"><img src="img/logo-best-burger.webp" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" width="72" height="72" /></a>
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="menu.html">Menu</a>
+        <a href="galerie.html">Galerie</a>
+        <a href="contact.html">Contact</a>
+        <a href="fidelite.html">Fidélité</a>
+        <span class="nav-cta"><a class="btn" href="tel:+33327210912">03 27 21 09 12</a></span>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" type="button" aria-label="Activer le mode clair" title="Activer le mode clair" hidden>
+          <svg class="theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+          <svg class="theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20.9 13.2A9 9 0 0 1 10.8 3.1 9 9 0 1 0 20.9 13.2Z"/></svg>
+        </button>
+        <button class="nav-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="hero hero--page hero--short">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="hero__noise"></div>
+    <div class="container hero__content">
+      <p class="eyebrow" data-reveal>Programme fidélité</p>
+      <h1 class="hero__title" data-reveal data-delay="1">MA <span class="hl">CARTE</span></h1>
+      <p class="hero__sub" data-reveal data-delay="2">Ajoute-la à ton Wallet et présente le QR code à chaque commande.</p>
+    </div>
+  </section>
+
+  <!-- ===== MA CARTE ===== -->
+  <section class="section">
+    <div class="container loyalty-narrow" data-fidelite-carte>
+      <p class="form__status" role="status" aria-live="polite" data-status>Chargement de votre carte…</p>
+      <div data-card-content hidden>
+        <div class="loyalty-card" data-card aria-label="Votre carte fidélité">
+            <div class="loyalty-card__top">
+              <img src="img/logo-best-burger.webp" alt="" width="44" height="44" />
+              <div>
+                <p class="loyalty-card__brand">BEST BURGER</p>
+                <p class="loyalty-card__label">Carte fidélité</p>
+              </div>
+              <p class="loyalty-card__count"><span data-field="tampons">3</span>/<span data-field="requis">10</span></p>
+            </div>
+            <div class="stamps" data-stamps></div>
+            <div class="loyalty-card__bottom">
+              <div><span class="loyalty-card__key">Membre</span><span data-field="prenom">—</span></div>
+              <div><span class="loyalty-card__key">Code</span><span class="loyalty-card__code" data-field="code">—</span></div>
+            </div>
+          </div>
+        <p class="loyalty-reward" data-reward hidden></p>
+        <div class="wallet-buttons">
+          <a class="wallet-btn" data-wallet="apple" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.5 2-3.6-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.2-2.8.8-3.5.8-.7 0-1.9-.8-3.1-.8-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.2.8 1.1 1.7 2.3 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.2.9-1.3 1.3-2.5 1.3-2.6 0 0-2.4-.9-2.4-3.6zM14.1 5.6c.6-.8 1.1-1.8 1-2.9-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.8 1 .1 2.1-.5 2.7-1.3z"/></svg><span><small>Ajouter à</small>Apple Wallet</span></a>
+          <a class="wallet-btn" data-wallet="google" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6z"/></svg><span><small>Ajouter à</small>Google Wallet</span></a>
+        </div>
+        <p class="loyalty-note" data-wallet-missing hidden>L'ajout au Wallet sera bientôt disponible. En attendant, donnez votre code au comptoir.</p>
+        <p class="loyalty-note">Gardez cette page dans vos favoris : elle donne accès à votre carte sur cet appareil.</p>
+        <p class="loyalty-note"><button class="link-btn" type="button" data-delete>Supprimer ma carte et mes données</button></p>
+      </div>
+      <div data-no-card hidden>
+        <p>Aucune carte n'est enregistrée sur cet appareil.</p>
+        <p class="section-actions"><a class="btn" href="fidelite.html">Créer ma carte</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="index.html" class="brand"><img src="img/logo-best-burger.webp" alt="BEST BURGER — Saint-Amand-les-Eaux" class="brand-logo" width="72" height="72" /></a>
+          <p>Burgers, tacos et snacks généreux à Saint-Amand-les-Eaux. Sur place, à emporter ou en livraison.</p>
+        </div>
+        <div>
+          <h2 class="footer__title">Navigation</h2>
+          <div class="footer__links">
+            <a href="index.html">Accueil</a>
+            <a href="menu.html">Menu</a>
+            <a href="galerie.html">Galerie</a>
+            <a href="contact.html">Contact</a>
+            <a href="fidelite.html">Carte fidélité</a>
+          </div>
+        </div>
+        <div>
+          <h2 class="footer__title">Suivez-nous</h2>
+          <div class="socials">
+            <a href="https://www.facebook.com/BESTBURGER.FR" aria-label="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="https://www.snapchat.com/add/BESTBURGER59230" aria-label="Snapchat" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.5 0 4.5 2 4.5 4.5 0 1 .1 2 .3 2.6.3.1.7.1 1 0 .5-.2 1.2-.4 1.6.2.3.4.1.9-.4 1.2-.4.2-1 .4-1.4.7-.3.2-.2.5-.1.8.5 1.2 1.6 2.2 2.9 2.6.4.1.6.4.4.8-.3.6-1.4.9-2.3 1-.1.4-.1.8-.4 1-.3.1-.8 0-1.3-.1-.7-.1-1.5-.2-2.3.1-.5.2-.9.6-1.3 1-.6.5-1.2 1-2.3 1s-1.7-.5-2.3-1c-.4-.4-.8-.8-1.3-1-.8-.3-1.6-.2-2.3-.1-.5.1-1 .2-1.3.1-.3-.2-.3-.6-.4-1-.9-.1-2-.4-2.3-1-.2-.4 0-.7.4-.8 1.3-.4 2.4-1.4 2.9-2.6.1-.3.2-.6-.1-.8-.4-.3-1-.5-1.4-.7-.5-.3-.7-.8-.4-1.2.4-.6 1.1-.4 1.6-.2.3.1.7.1 1 0 .2-.6.3-1.6.3-2.6C7.5 4 9.5 2 12 2z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© <span data-year>2026</span> BEST BURGER — 9 Place du 11 novembre, 59230 Saint-Amand-les-Eaux.</span>
+        <span><a href="mentions-legales.html">Mentions légales</a> · Fait avec gourmandise.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script src="js/fidelite.js"></script>
+</body>
+</html>
