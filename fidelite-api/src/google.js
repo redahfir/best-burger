@@ -1,5 +1,6 @@
 // Google Wallet : lien « Ajouter à Google Wallet » (JWT signé) et mise à jour des cartes.
 import crypto from "node:crypto";
+import { visuel } from "./visuel.js";
 
 const API = "https://walletobjects.googleapis.com/walletobjects/v1";
 const b64url = input => Buffer.from(typeof input === "string" ? input : JSON.stringify(input)).toString("base64url");
@@ -26,6 +27,15 @@ export function loyaltyClass(config) {
   };
 }
 
+// Bannière avec les tampons du client, servie par ce serveur : Google ne la télécharge
+// que depuis une adresse HTTPS publique, donc pas pendant un test en réseau local.
+function heroImage(member, config) {
+  if (!config.publicUrl.startsWith("https://")) return undefined;
+  const { tampons } = member, total = config.tamponsRequis;
+  return { sourceUri: { uri: `${config.publicUrl}/visuels/google/${tampons}-${total}.png?v=${visuel().version}` },
+    contentDescription: { defaultValue: { language: "fr-FR", value: `${tampons} tampon${tampons > 1 ? "s" : ""} sur ${total}` } } };
+}
+
 export function loyaltyObject(member, config) {
   return {
     id: objectId(config.google, member),
@@ -39,6 +49,7 @@ export function loyaltyObject(member, config) {
     textModulesData: [{ id: "regle", header: "Comment ça marche",
       body: `Un tampon par passage en caisse. Au bout de ${config.tamponsRequis} tampons : ${config.recompense.toLowerCase()}.` }],
     linksModuleData: { uris: [{ id: "carte", uri: `${config.siteUrl}/carte.html`, description: "Voir ou supprimer ma carte" }] },
+    heroImage: heroImage(member, config),
   };
 }
 
@@ -80,7 +91,8 @@ export function createGoogleClient(config, fetchImpl = fetch) {
       const res = await fetchImpl(`${API}/loyaltyObject/${encodeURIComponent(body.id)}`, {
         method: "PATCH",
         headers: { authorization: `Bearer ${await accessToken()}`, "content-type": "application/json" },
-        body: JSON.stringify({ loyaltyPoints: body.loyaltyPoints, secondaryLoyaltyPoints: body.secondaryLoyaltyPoints, accountName: body.accountName }),
+        body: JSON.stringify({ loyaltyPoints: body.loyaltyPoints, secondaryLoyaltyPoints: body.secondaryLoyaltyPoints,
+          accountName: body.accountName, heroImage: body.heroImage }),
       });
       if (!res.ok && res.status !== 404) throw new Error(`Google Wallet ${res.status}`);
       return res.ok;

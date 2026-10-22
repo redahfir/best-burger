@@ -852,8 +852,9 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
 
 /* La carte garde les couleurs de la marque dans les deux thèmes, comme dans le Wallet. */
 .loyalty-card {
+  --card-pad: 22px;
   max-width: 440px;
-  padding: 22px;
+  padding: var(--card-pad);
   border-radius: 22px;
   color: #ffffff;
   background:
@@ -867,21 +868,23 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
 .loyalty-card__brand { font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.04em; line-height: 1.1; }
 .loyalty-card__label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: #ffce00; font-weight: 700; }
 .loyalty-card__count { margin-left: auto; font-family: var(--font-display); font-size: 1.6rem; color: #ffce00; }
-.stamps {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(8px, 3vw, 14px);
-  margin: 22px 0;
+/* Bannière identique à celle du Wallet : le fond est dessiné par fidelite-api/outils/visuel, les tampons placés par fillCard. */
+.loyalty-card__banner {
+  position: relative;
+  margin: 20px calc(-1 * var(--card-pad));
+  aspect-ratio: 1032 / 336;
+  overflow: hidden;
+  background: #0d0d0d;
 }
+.loyalty-card__banner img { display: block; width: 100%; height: 100%; }
+.stamps { position: absolute; inset: 0; }
 .stamp {
+  position: absolute;
   aspect-ratio: 1;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: url("../img/fidelite/tampon-vide.png") center / contain no-repeat;
 }
-.stamp.is-on {
-  border-color: #ffce00;
-  background: #ffce00 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230d0d0d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 58% no-repeat;
-}
+.stamp.is-on { background-image: url("../img/fidelite/tampon-plein.png"); }
+.stamp.is-gift { background-image: url("../img/fidelite/tampon-cadeau.png"); }
 .loyalty-card__bottom { display: flex; justify-content: space-between; gap: 16px; font-weight: 700; }
 .loyalty-card__bottom > div { display: flex; flex-direction: column; min-width: 0; }
 .loyalty-card__bottom > div:last-child { text-align: right; }
@@ -988,7 +991,7 @@ html.lightbox-open, html.lightbox-open body { overflow: hidden; }
   .loyalty-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 420px) {
-  .loyalty-card { padding: 18px; }
+  .loyalty-card { --card-pad: 18px; }
   .section--counter .info-card, .loyalty-form-card { padding: 22px; }
 }
 

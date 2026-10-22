@@ -85,6 +85,19 @@ Tant que `API_URL` est vide, la page Fidélité affiche « bientôt disponible �
 | `POST /api/comptoir/membres/:id/tampons` | Ajout de tampons ; chaque carte complète donne une récompense |
 | `POST /api/comptoir/membres/:id/recompense` | Utilisation d'une récompense |
 | `/apple/v1/…` | Service web Apple Wallet (inscription des iPhone, mises à jour) |
+| `GET /visuels/google/:tampons-:total.png` | Bannière de la carte Google Wallet (publique, rien de personnel) |
+
+## Visuel de la carte
+
+La carte affiche un bandeau avec la photo du burger et les tampons du client : `strip.png` dans Apple Wallet,
+bannière (`heroImage`) dans Google Wallet, et la même image sur `carte.html`. Le décor et les tampons sont dessinés
+une fois pour toutes dans `outils/visuel/modele.html` ; le serveur place ensuite les tampons du client
+(`src/visuel.js`, sans bibliothèque d'image) et garde les images en mémoire.
+
+Google télécharge la bannière depuis ce serveur : elle n'apparaît que si `PUBLIC_URL` est une adresse HTTPS
+publique (pas pendant un test en réseau local). Pour changer le dessin : modifier `modele.html`, lancer
+`node outils/visuel/rendre.mjs` (Playwright requis), puis reporter la zone affichée dans `ZONE_TAMPONS`
+de `js/fidelite.js`. Les cartes Google se mettent à jour au tampon suivant.
 
 Sécurité : chaque carte a un jeton secret ; le comptoir est protégé par `STAFF_SECRET` avec blocage après
 10 essais erronés ; les inscriptions sont limitées par adresse IP ; seules les origines autorisées peuvent appeler l'API.

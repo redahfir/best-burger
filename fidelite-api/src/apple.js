@@ -3,7 +3,7 @@ import fs from "node:fs";
 import http2 from "node:http2";
 import { fileURLToPath } from "node:url";
 import { PKPass } from "passkit-generator";
-import { renderStrip } from "./strip.js";
+import { visuel } from "./visuel.js";
 
 const assetsDir = fileURLToPath(new URL("../assets/apple/", import.meta.url));
 const images = Object.fromEntries(fs.readdirSync(assetsDir).filter(f => f.endsWith(".png"))
@@ -25,6 +25,7 @@ export function buildApplePass(member, config) {
     webServiceURL: `${config.publicUrl}/apple`,
     authenticationToken: member.token,
     sharingProhibited: true,
+    suppressStripShine: true,
     storeCard: {
       headerFields: [{ key: "tampons", label: "TAMPONS", value: `${member.tampons}/${tamponsRequis}`,
         changeMessage: "Nouveau tampon ! Vous en êtes à %@" }],
@@ -44,12 +45,12 @@ export function buildApplePass(member, config) {
     barcodes: [{ format: "PKBarcodeFormatQR", message: member.code, messageEncoding: "iso-8859-1", altText: member.code }],
   };
 
-  const filled = member.tampons;
+  const strip = scale => visuel().render({ format: "apple", scale, total: tamponsRequis, filled: member.tampons });
   const pass = new PKPass({
     ...images,
-    "strip.png": renderStrip({ width: 375, height: 123, total: tamponsRequis, filled }),
-    "strip@2x.png": renderStrip({ width: 750, height: 246, total: tamponsRequis, filled }),
-    "strip@3x.png": renderStrip({ width: 1125, height: 369, total: tamponsRequis, filled }),
+    "strip.png": strip(1),
+    "strip@2x.png": strip(2),
+    "strip@3x.png": strip(3),
     "pass.json": Buffer.from(JSON.stringify(passJson)),
   }, {
     wwdr: apple.wwdr,
