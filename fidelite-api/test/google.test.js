@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createGoogleClient } from "../src/google.js";
+import { createGoogleClient, loyaltyObject } from "../src/google.js";
 import { testConfig } from "./helpers.js";
 
 test("Google Wallet : jeton OAuth mis en cache et carte mise à jour", async () => {
@@ -20,4 +20,11 @@ test("Google Wallet : jeton OAuth mis en cache et carte mise à jour", async () 
   assert.match(patch.url, /loyaltyObject\/3388000000012345678\.abc$/);
   assert.equal(patch.options.headers.authorization, "Bearer jeton");
   assert.deepEqual(JSON.parse(patch.options.body).loyaltyPoints.balance, { string: "4/10" });
+  assert.match(JSON.parse(patch.options.body).heroImage.sourceUri.uri, /\/visuels\/google\/4-10\.png\?v=/);
+});
+
+test("Google Wallet : pas de bannière quand le serveur n'est pas en HTTPS public (test en réseau local)", () => {
+  const object = loyaltyObject({ serial: "abc", code: "BB-AAAAAA", prenom: "Inès", tampons: 4, recompenses: 0 },
+    testConfig({ publicUrl: "http://192.168.1.20:8787" }));
+  assert.equal(object.heroImage, undefined);
 });

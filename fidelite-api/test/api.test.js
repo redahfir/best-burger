@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fakeAppleCertificates, startServer, testConfig, unzip } from "./helpers.js";
+import { decodePng, visuel } from "../src/visuel.js";
 
 const certs = fakeAppleCertificates();
 const config = testConfig({ apple: { passTypeIdentifier: "pass.test.bestburger", teamIdentifier: "ABCDE12345",
@@ -122,6 +123,11 @@ test("Apple Wallet : .pkpass complet et signature valide", async () => {
   assert.equal(pass.authenticationToken, data.token);
   assert.equal(pass.webServiceURL, "https://fidelite.example/apple");
   assert.equal(pass.storeCard.headerFields[0].value, "3/10");
+  assert.equal(pass.suppressStripShine, true);
+  for (const [f, w, h] of [["strip.png", 375, 144], ["strip@2x.png", 750, 288], ["strip@3x.png", 1125, 432]]) {
+    const png = decodePng(files[f]);
+    assert.deepEqual([png.width, png.height], [w, h], f);
+  }
   assert.equal(pass.barcodes[0].message, data.carte.code);
 
   const manifest = JSON.parse(files["manifest.json"]);
@@ -176,6 +182,20 @@ test("Google Wallet : lien d'ajout signé avec la carte du client", async () => 
   assert.equal(object.id, `3388000000012345678.${data.serial}`);
   assert.equal(object.classId, "3388000000012345678.best-burger-fidelite");
   assert.equal(object.barcode.value, data.carte.code);
+  assert.equal(object.heroImage.sourceUri.uri, `https://fidelite.example/visuels/google/0-10.png?v=${visuel().version}`);
+  assert.equal(object.heroImage.contentDescription.defaultValue.value, "0 tampon sur 10");
+});
+
+test("Google Wallet : bannière des tampons publique, mise en cache, limitée à la règle en cours", async () => {
+  const res = await srv.api("GET", "/visuels/google/4-10.png");
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("content-type"), "image/png");
+  assert.match(res.headers.get("cache-control"), /immutable/);
+  const png = decodePng(res.data);
+  assert.deepEqual([png.width, png.height], [1032, 336]);
+  for (const url of ["/visuels/google/4-9.png", "/visuels/google/11-10.png", "/visuels/google/a-10.png"]) {
+    assert.equal((await srv.api("GET", url)).status, 404, url);
+  }
 });
 
 test("RGPD : le client peut supprimer sa carte", async () => {

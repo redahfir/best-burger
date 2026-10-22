@@ -1,5 +1,6 @@
 // API de la carte fidélité : inscription, cartes Wallet, comptoir et service web Apple.
 import crypto from "node:crypto";
+import { visuel } from "./visuel.js";
 
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
 const PHONE = /^\+?[0-9 .-]{6,20}$/;
@@ -154,6 +155,15 @@ export function createApp({ config, store, wallet, log = console }) {
       if (!config.google) throw new HttpError(503, "Google Wallet n'est pas encore configuré.");
       const m = memberFromToken(params[0], url.searchParams.get("t"));
       return reply(302, { headers: { location: wallet.saveUrl(m, config), "cache-control": "no-store" } });
+    }],
+
+    // Bannière Google Wallet : la même pour tous les clients au même nombre de tampons, rien de personnel.
+    ["GET", /^\/visuels\/google\/(\d{1,2})-(\d{1,2})\.png$/, ({ params }) => {
+      const [filled, total] = params.map(Number);
+      if (total !== config.tamponsRequis || filled > total) throw new HttpError(404, "Introuvable.");
+      return reply(200, { raw: visuel().render({ format: "google", total, filled }), headers: {
+        "content-type": "image/png", "cache-control": "public, max-age=31536000, immutable",
+      } });
     }],
 
     ["GET", /^\/api\/comptoir\/membres$/, ({ req, url }) => {

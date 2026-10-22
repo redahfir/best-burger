@@ -38,6 +38,9 @@
     el.classList.toggle("is-error", isError);
   };
 
+  // Zone des tampons sur img/fidelite/fond-carte.jpg, en fraction de l'image (donnée par fidelite-api/outils/visuel/rendre.mjs).
+  const ZONE_TAMPONS = { x: 0.031, y: 0.244, w: 0.5475, h: 0.6726 };
+
   // Remplit une carte visuelle (.loyalty-card) avec les tampons du client.
   function fillCard(card, data) {
     const set = (name, value) => card.querySelectorAll(`[data-field="${name}"]`).forEach(el => { el.textContent = value; });
@@ -45,11 +48,20 @@
     set("requis", data.tamponsRequis);
     set("prenom", data.prenom);
     set("code", data.code);
+    // Même disposition que la bannière du Wallet (fidelite-api/src/visuel.js) : 1 rangée jusqu'à 5 tampons, sinon 2.
     const stamps = card.querySelector("[data-stamps]");
     stamps.textContent = "";
-    for (let i = 0; i < data.tamponsRequis; i++) {
+    const total = data.tamponsRequis, rows = total <= 5 ? 1 : 2, cols = Math.ceil(total / rows);
+    const zone = { x: ZONE_TAMPONS.x * 1032, y: ZONE_TAMPONS.y * 336, w: ZONE_TAMPONS.w * 1032, h: ZONE_TAMPONS.h * 336 };
+    const cell = Math.min(zone.w / cols, zone.h / rows), size = cell * 0.86;
+    for (let i = 0; i < total; i++) {
       const stamp = document.createElement("span");
-      stamp.className = "stamp" + (i < data.tampons ? " is-on" : "");
+      stamp.className = "stamp" + (i < data.tampons ? " is-on" : i === total - 1 ? " is-gift" : "");
+      const x = zone.x + cell * (i % cols + 0.5) - size / 2;
+      const y = zone.y + (zone.h - cell * rows) / 2 + cell * (Math.floor(i / cols) + 0.5) - size / 2;
+      stamp.style.left = `${(x / 1032) * 100}%`;
+      stamp.style.top = `${(y / 336) * 100}%`;
+      stamp.style.width = `${(size / 1032) * 100}%`;
       stamps.appendChild(stamp);
     }
     stamps.setAttribute("aria-label", `${data.tampons} tampons sur ${data.tamponsRequis}`);
@@ -64,6 +76,9 @@
     const form = document.querySelector("[data-fidelite-inscription]");
     if (form) {
       const status = form.querySelector("[data-status]");
+      const exempleCard = document.querySelector("[data-card-exemple]");
+      const exemple = { tampons: 3, tamponsRequis: 10, prenom: "Inès", code: "BB-7K3F9Q" };
+      if (exempleCard) fillCard(exempleCard, exemple);
       const saved = storage.get(CARD_KEY);
       if (saved && saved.serial) document.querySelector("[data-saved-card]").hidden = false;
       if (!API_URL) {
@@ -71,6 +86,8 @@
         document.querySelector("[data-unavailable]").hidden = false;
       } else {
         api("/api/config").then(cfg => {
+          exemple.tamponsRequis = cfg.tamponsRequis;
+          if (exempleCard) fillCard(exempleCard, exemple);
           document.querySelectorAll('[data-field="requis"]').forEach(el => { el.textContent = cfg.tamponsRequis; });
           document.querySelectorAll('[data-field="recompense"]').forEach(el => { el.textContent = cfg.recompense.toLowerCase(); });
         }).catch(() => {});
